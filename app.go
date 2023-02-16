@@ -15,6 +15,7 @@ import (
 // App struct
 type App struct {
 	ctx context.Context
+	cacheFolder string
 }
 
 // NewApp creates a new App application struct
@@ -26,6 +27,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	a.PrepareCacheDirectory()
 }
 
 type StartupEntry struct {
@@ -43,6 +45,18 @@ var StartupItems []StartupEntry
 var iconPath string = "./frontend/src/assets/images/icons/"
 // var iconPath string = "./frontend/dist/assets/images/icons/"
 // var iconPath string = "%temp%/ScheduleMaster/assets/images/icons/"
+
+func (a *App) PrepareCacheDirectory() {
+	appData, error := os.UserCacheDir()
+
+	if error != nil {
+		log.Println("Failed to get user cache directory")
+		return
+	}
+	a.cacheFolder = appData + "\\ScheduleMaster"
+
+	os.Mkdir(a.cacheFolder, 0755)
+}
 
 
 func (a *App) FetchStartupItems() []StartupEntry {

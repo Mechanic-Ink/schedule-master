@@ -11,9 +11,9 @@ import DesktopWindowsIcon from "@mui/icons-material/DesktopWindows";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 
-import { StartupEntry } from "../StartupEntry/interface";
+import StartupEntry from "app/util/interfaces/IStartupEntry";
 import { FetchStartupItems } from "../../../wailsjs/go/main/App";
-import { useEntries } from "../StartupEntry/context";
+import { useEntries } from "../../util/contexts/StartupEntry/context";
 import Box from "@mui/system/Box";
 // import useStyles from "./styles";
 

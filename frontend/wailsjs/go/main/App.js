@@ -10,6 +10,10 @@ export function FetchStartupItems() {
   return window['go']['main']['App']['FetchStartupItems']();
 }
 
+export function PrepareCacheDirectory() {
+  return window['go']['main']['App']['PrepareCacheDirectory']();
+}
+
 export function ShowExecutableLocation(arg1) {
   return window['go']['main']['App']['ShowExecutableLocation'](arg1);
 }

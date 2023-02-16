@@ -6,4 +6,6 @@ export function BackupStartupItems():Promise<boolean>;
 
 export function FetchStartupItems():Promise<Array<main.StartupEntry>>;
 
+export function PrepareCacheDirectory():Promise<void>;
+
 export function ShowExecutableLocation(arg1:string):Promise<void>;

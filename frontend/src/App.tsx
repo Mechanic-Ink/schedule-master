@@ -2,11 +2,12 @@ import { useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 // import logo from "./assets/images/logo-universal.png";
 
-import { StartupEntry } from "./components/StartupEntry/interface";
+import StartupEntry from "app/util/interfaces/IStartupEntry";
 import Sidebar from "./components/Sidebar";
 import MenuBar from "./components/MenuBar";
 import MainContent from "./components/MainContent";
-import { EntriesProvider } from "./components/StartupEntry/context";
+import { EntriesProvider } from "./util/contexts/StartupEntry/context";
+
 import "./App.css";
 // import {Greet} from "../wailsjs/go/main/App";
 
