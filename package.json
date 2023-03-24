@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "path": "^0.12.7",
+    "react-hot-toast": "^2.4.0",
+    "recoil": "^0.7.7"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.0"
+  }
+}

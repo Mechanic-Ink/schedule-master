@@ -9,16 +9,13 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	// "strings"
 )
 
-// App struct
 type App struct {
 	ctx context.Context
 	cacheFolder string
 }
 
-// NewApp creates a new App application struct
 func NewApp() *App {
 	return &App{}
 }
@@ -31,7 +28,7 @@ func (a *App) startup(ctx context.Context) {
 }
 
 type StartupEntry struct {
-	ID int16
+	Id int16
 	Name string
 	Command string
 	Type string
@@ -42,9 +39,8 @@ type StartupEntry struct {
 
 var StartupItems []StartupEntry
 
+var itemIndex int16 = 1;
 var iconPath string = "./frontend/src/assets/images/icons/"
-// var iconPath string = "./frontend/dist/assets/images/icons/"
-// var iconPath string = "%temp%/ScheduleMaster/assets/images/icons/"
 
 func (a *App) PrepareCacheDirectory() {
 	appData, error := os.UserCacheDir()
@@ -61,6 +57,7 @@ func (a *App) PrepareCacheDirectory() {
 
 func (a *App) FetchStartupItems() []StartupEntry {
 	StartupItems = make([]StartupEntry, 0)
+	itemIndex = 1;
 
 	//Create Icon folder if it doesn't exist already
 	if _, error := os.Stat(iconPath); os.IsNotExist(error) {
@@ -76,23 +73,19 @@ func (a *App) FetchStartupItems() []StartupEntry {
 		// `SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run`,
 	}
 
-	// log.Println("\n\n\n\nUserStartupItems:")
 	for _, path := range StartupCurrentUserPaths {
-		// log.Println(path)
 		StartupItems = append(StartupItems, fetchRegistryStartupItems("HKEY_CURRENT_USER", path)...)
 	}
-	// log.Println("\n\n\n\n\n End")
 
 	//HKEY_LOCAL_MACHINE
 	StartupLocalMachinePaths := []string {
 		`SOFTWARE\Microsoft\Windows\CurrentVersion\Run`,
-		`SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run`,
+		// `SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run`,
 		// `SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run`,
 		// `SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32`,
 	}
 
 	for _, path := range StartupLocalMachinePaths {
-		// log.Println(path)
 		StartupItems = append(StartupItems, fetchRegistryStartupItems("HKEY_LOCAL_MACHINE", path)...)
 	}
 
@@ -100,13 +93,8 @@ func (a *App) FetchStartupItems() []StartupEntry {
 }
 
 func (a *App) ShowExecutableLocation(file string) {
-
-	// file = strings.ReplaceAll(file, "\\", "\\\\")
-	log.Println("should be opening:", file)
-
 	command := exec.Command(`explorer.exe`, "/select,", file)
 	log.Println(command.String())
-
 
 	error := command.Start()
 	if error != nil {
@@ -196,10 +184,8 @@ func (a *App) BackupStartupItems() bool {
 	return true
 }
 
-var itemIndex int16
 func fetchRegistryStartupItems(location string, path string) []StartupEntry {
 	var outcome []StartupEntry
-	itemIndex = 0;
 
 	baseKeyLocation := getKeyLocation(location)
 
@@ -224,13 +210,11 @@ func fetchRegistryStartupItems(location string, path string) []StartupEntry {
 		}
 
 		// log.Printf("%s: %s\n", name, command)
-		log.Println("CURRENT: ", name)
+		// log.Println("CURRENT: ", name)
 
 		var duplicate bool = false
 
 		for _, item := range outcome {
-			// log.Println("ITEM NAME: ", item.Name)
-			// log.Println("NAME NAME: ", name)
 			if item.Name == name /*&& item.Command == command*/ {
 				duplicate = true
 			}
@@ -244,7 +228,7 @@ func fetchRegistryStartupItems(location string, path string) []StartupEntry {
 			_ = extractExecutableIcon(fileName, iconPath + iconName)
 
 			outcome = append(outcome, StartupEntry {
-				ID: itemIndex,
+				Id: itemIndex,
 				Name: name,
 				Command: command,
 				Type: location,
