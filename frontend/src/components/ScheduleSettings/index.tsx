@@ -1,20 +1,27 @@
-import { Card, CardContent, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField } from "@mui/material";
+import { Box, Card, CardContent, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, MenuItem, TextField } from "@mui/material";
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import IStartupOptions from "app/atoms/StartupOptions/interface";
 import dayjs, { Dayjs } from "dayjs";
+import { useRecoilState } from "recoil";
 
+import MultiDateSelect from "./MultiDateSelect"
+import StartupOptions, { useStartupOptions } from "app/atoms/StartupOptions";
 import WeekDays from "../../util/enums/WeekDays";
-import IScheduleSettings from "./interface";
+// import MonthDays, { monthDaysMap } from "../../util/enums/MonthDays";
+import MonthDaysSelect from './MonthDaysSelect';
 
-const ScheduleSettings: React.FC<IScheduleSettings> = ({options, setOptions}) => {
+const ScheduleSettings: React.FC = () => {
+	const [options, _] = useRecoilState<IStartupOptions>(StartupOptions);
+	const { setOption } = useStartupOptions();
 
 	const findDateIndex = (dates: Dayjs[], date: Dayjs) => {
 		const timestamp = date.unix();
 		return dates.findIndex((item) => item.unix() === timestamp);
 	}
 
-	const toggleStartupDay = (weekday: WeekDays) => {
-		setOptions({weekDayStartupDays: (options.weekDayStartupDays ^ weekday)});
+	const toggleStartupDay = (weekDay: WeekDays) => {
+		setOption('weekDayStartupDays', (options.weekDayStartupDays ^ weekDay));
 	};
 
 	return (
@@ -25,7 +32,7 @@ const ScheduleSettings: React.FC<IScheduleSettings> = ({options, setOptions}) =>
 						<FormControl>
 							<FormLabel>Scheduling Settings:</FormLabel>
 							<FormControlLabel
-								control={<Checkbox onChange={(e) => setOptions({weekDayStartup: e.target.checked})}/>}
+								control={<Checkbox onChange={(e) => setOption('weekDayStartup', e.target.checked)}/>}
 								label="Run on specific week days"
 							/>
 							{(options.weekDayStartup) &&
@@ -84,47 +91,32 @@ const ScheduleSettings: React.FC<IScheduleSettings> = ({options, setOptions}) =>
 									<Divider />
 								</>
 							}
+
 							<FormControlLabel
-								control={<Checkbox onChange={(e) => setOptions({monthDayStartup: e.target.checked})}/>}
+								control={<Checkbox onChange={(e) => setOption('monthDayStartup', e.target.checked)}/>}
 								label="Run on specific days of the month"
 							/>
+							{(options.monthDayStartup) && <MonthDaysSelect /> }
+
 							<FormControlLabel
-								control={<Checkbox onChange={(e) => setOptions({calendarStartup: e.target.checked})}/>}
+								control={<Checkbox onChange={(e) => setOption('calendarStartup', e.target.checked)}/>}
 								label="Run on specified dates"
 							/>
-							{(options.calendarStartup) &&
-								<LocalizationProvider dateAdapter={AdapterDayjs}>
-									<StaticDatePicker
-										// format="MM/DD/YYYY"
-										label="Select dates"
-										// value={options.calendarStartupDays}
-										value={dayjs("")}
-										renderInput={(params) => <TextField {...params} />}
-										onChange={(choice) => {
-											if(choice == null) return;
-
-											const days = [...options.calendarStartupDays];
-											const date = choice.startOf('day');
-											// console.log(date);
-
-											const index = findDateIndex(days, date);
-											if(index >= 0) days.splice(index, 1);
-											else days.push(date);
-
-											setOptions({calendarStartupDays: days});
-										}}
-									/>
-								</LocalizationProvider>
+							{(options.calendarStartup) && 
+								<MultiDateSelect/>
 							}
+
 							<FormLabel>Automatically close the app if:</FormLabel>
 							<FormControlLabel
-								control={<Checkbox onChange={(e) => setOptions({calendarClosing: e.target.checked})}/>}
+								control={<Checkbox onChange={(e) => setOption('calendarShutdown', e.target.checked)}/>}
 								label="It runs during days/dates that it is not scheduled"
 							/>
-							<FormControlLabel
-								control={<Checkbox onChange={(e) => setOptions({clockClosing: e.target.checked})}/>}
-								label="It runs outside of the time range specified"
-							/>
+							{(options.timedShutdown) &&
+								<FormControlLabel
+									control={<Checkbox onChange={(e) => setOption('timedShutdown', e.target.checked)}/>}
+									label="It runs outside of the time range specified"
+								/>
+							}
 						</FormControl>
 					</Grid>
 				</Grid>

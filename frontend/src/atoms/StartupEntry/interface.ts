@@ -1,5 +1,5 @@
-interface IStartupEntry {
-	ID: number;
+export default interface IStartupEntry {
+	Id: number;
 	Name: string;
 	Command: string;
 	Type: string;
@@ -7,5 +7,3 @@ interface IStartupEntry {
 	File: string;
 	Icon: string;
 }
-
-export default IStartupEntry;

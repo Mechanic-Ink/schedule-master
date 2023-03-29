@@ -4,9 +4,14 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
 
-import IStartupSettings from "./interface";
+import StartupOptions, { useStartupOptions } from "app/atoms/StartupOptions";
+import IStartupOptions from "app/atoms/StartupOptions/interface";
+import { useRecoilState } from "recoil";
 
-const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
+const StartupSettings: React.FC = () => {
+
+	const [options, _] = useRecoilState<IStartupOptions>(StartupOptions);
+	const { setOption } = useStartupOptions();
 
 	return (
 		<Card sx={{ m:0.5}}>
@@ -22,7 +27,7 @@ const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
 								labelId="startup-type-label"
 								value={options.startupType}
 								label="When to run"
-								onChange={(e) => setOptions({startupType: Number(e.target.value)})}
+								onChange={(e) => setOption('startupType', Number(e.target.value))}
 							>
 								<MenuItem value={0}>Startup</MenuItem>
 								<MenuItem value={1}>Log on</MenuItem>
@@ -39,7 +44,7 @@ const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
 										<TimePicker
 											value={options.startupTime}
 											renderInput={(params) => <TextField sx={{maxWidth: '12rem'}} {...params} />}
-											onChange={(e) => setOptions({startupTime: e ?? dayjs("2023-01-01T12:00")})}/>
+											onChange={(e) => setOption('startupTime', e ?? dayjs("2023-01-01T12:00"))}/>
 									</LocalizationProvider>
 								</FormControl>
 							</Grid>
@@ -47,9 +52,9 @@ const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
 								<FormControl fullWidth>
 									<FormControlLabel
 										control={
-											<Checkbox checked={options.lateStartup} onChange={(e) => setOptions({lateStartup: e.target.checked})}/>
+											<Checkbox checked={options.lateStartup} onChange={(e) => setOption('lateStartup', e.target.checked)}/>
 										}
-										label="Skip if unable to start on schedule"
+										label="Enable late startup"
 									/>
 								</FormControl>
 							</Grid>
@@ -58,7 +63,7 @@ const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
 					<Grid item xs={12}>
 						<FormControlLabel
 							control={
-								<Checkbox checked={options.timedShutdown} onChange={(e) => setOptions({timedShutdown: e.target.checked})}/>
+								<Checkbox checked={options.timedShutdown} onChange={(e) => setOption('timedShutdown', e.target.checked)}/>
 							}
 							label="Close at a specified time"
 						/>
@@ -69,15 +74,11 @@ const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
 									<TimePicker
 										value={options.timedShutdownTime}
 										renderInput={(params) => <TextField sx={{maxWidth: '12rem'}} {...params} />}
-										onChange={(e) => setOptions({timedShutdownTime: e ?? dayjs("2023-01-01T12:00")})}/>
+										onChange={(e) => setOption('timedShutdownTime', e ?? dayjs("2023-01-01T12:00"))}/>
 								</LocalizationProvider>
 								<FormControlLabel
-									control={<Checkbox onChange={(e) => setOptions({timedReopen: e.target.checked})}/>}
-									label="Always reopen the app before close time"
-								/>
-								<FormControlLabel
-									control={<Checkbox onChange={(e) => setOptions({timedClose: e.target.checked})}/>}
-									label="Always close the app after close time"
+									control={<Checkbox onChange={(e) => setOption('timedReopen', e.target.checked)}/>}
+									label="Always reopen the app before this time"
 								/>
 							</>
 							: ''
@@ -90,3 +91,10 @@ const StartupSettings: React.FC<IStartupSettings> = ({options, setOptions}) => {
 }
 
 export default StartupSettings;
+
+/*
+	<FormControlLabel
+		control={<Checkbox onChange={(e) => setOption('timedClose', e.target.checked)}/>}
+		label="Always close the app after close time"
+	/>
+*/

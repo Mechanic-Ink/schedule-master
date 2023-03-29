@@ -1,9 +1,7 @@
-import { useState } from "react";
 import Grid from "@mui/material/Unstable_Grid2";
 import { RecoilRoot } from 'recoil';
 // import logo from "./assets/images/logo-universal.png";
 
-import StartupEntry from "app/util/interfaces/IStartupEntry";
 import Sidebar from "./components/Sidebar";
 import MenuBar from "./components/MenuBar";
 import MainContent from "./components/MainContent";
@@ -13,8 +11,6 @@ import "./App.css";
 // import {Greet} from "../wailsjs/go/main/App";
 
 function App() {
-	const [startupEntry, setStartupEntry] = useState<StartupEntry>();
-
 	return (
 		<EntriesProvider>
 			<RecoilRoot>
@@ -24,10 +20,10 @@ function App() {
 							<MenuBar />
 						</Grid>
 						<Grid xs={3}>
-							<Sidebar setActiveStartupItem={setStartupEntry} />
+							<Sidebar />
 						</Grid>
 						<Grid xs={9}>
-							<MainContent activeStartupItem={startupEntry} />
+							<MainContent/>
 						</Grid>
 					</Grid>
 				</div>

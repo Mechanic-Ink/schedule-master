@@ -29,7 +29,41 @@ enum MonthDays {
 	Day28 = 134217728,
 	Day29 = 268435456,
 	Day30 = 536870912,
-	Day31 = 1073741824
+	Day31 = 1073741824,
 }
 
 export default MonthDays;
+
+export const monthDaysMap: { [key: number]: string } = {
+	[MonthDays.Day1]: "1st",
+	[MonthDays.Day2]: "2nd",
+	[MonthDays.Day3]: "3rd",
+	[MonthDays.Day4]: "4th",
+	[MonthDays.Day5]: "5th",
+	[MonthDays.Day6]: "6th",
+	[MonthDays.Day7]: "7th",
+	[MonthDays.Day8]: "8th",
+	[MonthDays.Day9]: "9th",
+	[MonthDays.Day10]: "10th",
+	[MonthDays.Day11]: "11th",
+	[MonthDays.Day12]: "12th",
+	[MonthDays.Day13]: "13th",
+	[MonthDays.Day14]: "14th",
+	[MonthDays.Day15]: "15th",
+	[MonthDays.Day16]: "16th",
+	[MonthDays.Day17]: "17th",
+	[MonthDays.Day18]: "18th",
+	[MonthDays.Day19]: "19th",
+	[MonthDays.Day20]: "20th",
+	[MonthDays.Day21]: "21st",
+	[MonthDays.Day22]: "22nd",
+	[MonthDays.Day23]: "23rd",
+	[MonthDays.Day24]: "24th",
+	[MonthDays.Day25]: "25th",
+	[MonthDays.Day26]: "26th",
+	[MonthDays.Day27]: "27th",
+	[MonthDays.Day28]: "28th",
+	[MonthDays.Day29]: "29th",
+	[MonthDays.Day30]: "30th",
+	[MonthDays.Day31]: "31st",
+};

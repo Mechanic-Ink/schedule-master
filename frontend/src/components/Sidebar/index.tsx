@@ -11,21 +11,15 @@ import DesktopWindowsIcon from "@mui/icons-material/DesktopWindows";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import Box from "@mui/system/Box";
+import { useRecoilState, useResetRecoilState } from "recoil";
 
-// import StartupEntry from "app/util/interfaces/IStartupEntry";
 import { FetchStartupItems } from "../../../wailsjs/go/main/App";
-// import { useEntries } from "../../util/contexts/StartupEntry/context";
-import ISidebar from "./interface";
-// import useStyles from "./styles";
-
-// import * as styles from "./styles.scss";
-// const styles = require("./styles.scss");
-import useStartupEntries, { IStartupEntry, ActiveStartupEntry } from "app/atoms/StartupEntry";
-import { useRecoilState } from "recoil";
+import useStartupEntries, { ActiveStartupEntry } from "app/atoms/StartupEntry";
+import IStartupEntry from "app/atoms/StartupEntry/interface";
+import StartupOptions, { useStartupOptions } from "app/atoms/StartupOptions";
 
 
-const Sidebar: React.FC<ISidebar> = ({ setActiveStartupItem }) => {
-	const [loaded, setLoaded] = useState<boolean>(false);
+const Sidebar: React.FC = () => {
 	const [itemsFetched, setItemsFetched] = useState<boolean>(false);
 	const {
 		allEntries,
@@ -42,13 +36,14 @@ const Sidebar: React.FC<ISidebar> = ({ setActiveStartupItem }) => {
 
 	const [startupMachineEntries, setStartupMachineEntries] = useState<IStartupEntry[]>([]);
 	const [startupUserEntries, setStartupUserEntries] = useState<IStartupEntry[]>([]);
-	const [startupCustomEntries, setStartupCustomEntries] = useState<IStartupEntry[]>([]);
+	const [startupCustomEntries, _] = useState<IStartupEntry[]>([]);
 
 	const [activeStartupEntry, setActiveStartupEntry] = useRecoilState(ActiveStartupEntry);
 
+	const { setOption } = useStartupOptions();
+	const resetOptions = useResetRecoilState(StartupOptions);
 
 	const fetchCalled = useRef<boolean>(false);
-	// const startupCustomEntries: IStartupEntry[] = [];
 
 	function fetchStartupItems() {
 		if(fetchCalled.current)return;
@@ -90,6 +85,13 @@ const Sidebar: React.FC<ISidebar> = ({ setActiveStartupItem }) => {
 		}
 	}
 
+	function changeActiveStartupEntry(startupEntry: IStartupEntry) {
+		setActiveStartupEntry(startupEntry);
+		resetOptions();
+		setOption('command', startupEntry.Command);
+		console.log(startupEntry.Command);
+	}
+
 	useEffect(() => {
 		fetchStartupItems();
 	}, []);
@@ -125,7 +127,10 @@ const Sidebar: React.FC<ISidebar> = ({ setActiveStartupItem }) => {
 						return (
 							<ListItemButton
 								key={startupEntry.Id}
-								onClick={() => {setActiveStartupEntry(startupEntry);}}
+								onClick={() => {changeActiveStartupEntry(startupEntry);}}
+								sx={{
+									background: activeStartupEntry.Id === startupEntry.Id ? 'grey' : 'transparent',
+								}}
 							>
 								<Box
 									component="img"
@@ -157,7 +162,7 @@ const Sidebar: React.FC<ISidebar> = ({ setActiveStartupItem }) => {
 						return (
 							<ListItemButton
 								key={startupEntry.Id}
-								onClick={() => {setActiveStartupEntry(startupEntry);}}
+								onClick={() => {changeActiveStartupEntry(startupEntry);}}
 							>
 								<Box
 									component="img"
@@ -183,9 +188,9 @@ const Sidebar: React.FC<ISidebar> = ({ setActiveStartupItem }) => {
 			</ListItemButton>
 			<Collapse in={isOpenCustom}>
 				<List>
-					{startupCustomEntries.map((sidebarItem) => {
+					{startupCustomEntries.map((startupEntry) => {
 						return (
-							<ListItemButton>{sidebarItem.Name}</ListItemButton>
+							<ListItemButton>{startupEntry.Name}</ListItemButton>
 						);
 					})}
 				</List>

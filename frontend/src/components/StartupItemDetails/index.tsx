@@ -5,16 +5,20 @@ import { useState } from "react";
 import { ShowExecutableLocation } from "../../../wailsjs/go/main/App";
 
 import IStartupItem from "./interface";
+import { useRecoilState } from "recoil";
+import IStartupOptions from "app/atoms/StartupOptions/interface";
+import StartupOptions, { useStartupOptions } from "app/atoms/StartupOptions";
 
 const StartupItemDetails: React.FC<IStartupItem> = ({item, backupRegistry, setBackupRegistry}) => {
-
+	const [options, _] = useRecoilState<IStartupOptions>(StartupOptions);
+	const { setOption } = useStartupOptions();
 	const [editCommandOpen, setEditCommandOpen] = useState(false);
 
+
 	const editItemCommand = () => {
-		const newEditCommand = (document.getElementById('editCommandField') as HTMLInputElement).value;
-		
-		// console.log("IN ANOTHER ELEMENT");
-		// console.log(startupEntry);
+		const newCommand = (document.getElementById('editCommandField') as HTMLInputElement).value;
+
+		setOption('command', newCommand);
 
 		setEditCommandOpen(false);
 	}
@@ -24,7 +28,7 @@ const StartupItemDetails: React.FC<IStartupItem> = ({item, backupRegistry, setBa
 			<Dialog open={editCommandOpen} onClose={() => setEditCommandOpen(false)} fullWidth maxWidth="sm" >
 				<DialogTitle>Edit Command</DialogTitle>
 				<DialogContent>
-					<TextField id="editCommandField" label="Command to execute" variant="standard" defaultValue={item.Command || ''} fullWidth/>
+					<TextField id="editCommandField" label="Command to execute" variant="standard" defaultValue={options.command || ''} fullWidth/>
 				</DialogContent>
 				<DialogActions>
 					<Button color="error" onClick={() => setEditCommandOpen(false)}>Cancel</Button>
@@ -37,7 +41,7 @@ const StartupItemDetails: React.FC<IStartupItem> = ({item, backupRegistry, setBa
 						<strong>Name</strong>:&nbsp;{item.Name}
 						<br />
 						<strong>Command</strong>:&nbsp;
-						{item.Command}&nbsp;
+						{options.command}&nbsp;
 						<span title="Edit Command" onClick={() => setEditCommandOpen(true)}>
 							<EditIcon
 								sx={{

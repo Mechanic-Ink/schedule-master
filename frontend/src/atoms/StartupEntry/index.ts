@@ -1,15 +1,5 @@
-import { atomFamily, atom, useSetRecoilState, useRecoilState, selector, useRecoilValue, useRecoilCallback } from 'recoil';
-import { useEffect, useState } from 'react';
-
-export interface IStartupEntry {
-	Id: number;
-	Name: string;
-	Command: string;
-	Type: string;
-	Registry: string;
-	File: string;
-	Icon: string;
-}
+import { atomFamily, atom, useRecoilState, selector, useRecoilValue, useRecoilCallback } from 'recoil';
+import IStartupEntry from './interface';
 
 export const ActiveStartupEntry = atom<IStartupEntry>({
 	key: 'ActiveStartupEntry',
