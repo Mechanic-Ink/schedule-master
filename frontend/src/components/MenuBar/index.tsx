@@ -3,14 +3,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { BackupStartupItems } from "../../../wailsjs/go/main/App";
-// import { FetchStartupItems } from "../../../wailsjs/go/main/App";
+import useFetchStartupItems from "app/util/actions/useFetchStartupItems";
 
 export default function MenuBar() {
 	const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(
 		null
 	);
-
 	const [openFile, setOpenFile] = useState<boolean>(false);
+	const { fetchStartupItems } = useFetchStartupItems(true);
 
 	function toggleOpen(
 		key: string,
@@ -25,7 +25,8 @@ export default function MenuBar() {
 	}
 
 	function reloadStartupItems() {
-
+		fetchStartupItems();
+		toggleOpen("file", null);
 	}
 
 	return (

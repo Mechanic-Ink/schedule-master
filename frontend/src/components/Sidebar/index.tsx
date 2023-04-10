@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import List from "@mui/material/List";
 import {
 	Collapse,
@@ -13,29 +13,21 @@ import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import Box from "@mui/system/Box";
 import { useRecoilState, useResetRecoilState } from "recoil";
 
-import { FetchStartupItems } from "../../../wailsjs/go/main/App";
+
 import useStartupEntries, { ActiveStartupEntry } from "app/atoms/StartupEntry";
 import IStartupEntry from "app/atoms/StartupEntry/interface";
 import StartupOptions, { useStartupOptions } from "app/atoms/StartupOptions";
+import useFetchStartupItems from "app/util/actions/useFetchStartupItems";
 
 
 const Sidebar: React.FC = () => {
-	const [itemsFetched, setItemsFetched] = useState<boolean>(false);
-	const {
-		allEntries,
-		// getEntry,
-		addEntry, 
-		// setEntry,
-		// removeEntry, 
-		// removeEntries 
-	} = useStartupEntries();
+	const { allEntries } = useStartupEntries();
+	const { fetchStartupItems } = useFetchStartupItems();
 
 	const [isOpenMachine, setIsOpenMachine] = useState(false);
 	const [isOpenUser, setIsOpenUser] = useState(false);
 	const [isOpenCustom, setIsOpenCustom] = useState(false);
 
-	const [startupMachineEntries, setStartupMachineEntries] = useState<IStartupEntry[]>([]);
-	const [startupUserEntries, setStartupUserEntries] = useState<IStartupEntry[]>([]);
 	const [startupCustomEntries, _] = useState<IStartupEntry[]>([]);
 
 	const [activeStartupEntry, setActiveStartupEntry] = useRecoilState(ActiveStartupEntry);
@@ -43,34 +35,6 @@ const Sidebar: React.FC = () => {
 	const { setOption } = useStartupOptions();
 	const resetOptions = useResetRecoilState(StartupOptions);
 
-	const fetchCalled = useRef<boolean>(false);
-
-	function fetchStartupItems() {
-		if(fetchCalled.current)return;
-		fetchCalled.current = true;
-
-		FetchStartupItems(true).then((startupEntries: IStartupEntry[]) => {
-			console.log("Called Fetch Startup Items");
-			setStartupMachineEntries([]);
-			setStartupUserEntries([]);
-
-			for(let entry of startupEntries) {
-
-				switch(entry.Type) {
-					case "HKEY_CURRENT_USER":
-						setStartupUserEntries(startupUserEntries => [...startupUserEntries, entry]);
-						break;
-					case "HKEY_LOCAL_MACHINE":
-						setStartupMachineEntries(startupMachineEntries => [...startupMachineEntries, entry]);
-						break;
-				}
-
-				addEntry(entry);
-			}
-			setItemsFetched(true);
-			fetchCalled.current = false;
-		});
-	}
 
 	function toggleOpen(key: string) {
 		switch (key) {
@@ -97,14 +61,6 @@ const Sidebar: React.FC = () => {
 		fetchStartupItems();
 	}, []);
 
-	useEffect(() => {
-		if(itemsFetched) {
-			console.log("Reading Entries", allEntries);
-			console.log("Machine Entries", startupMachineEntries);
-			console.log("User Entries", startupUserEntries);
-		}
-	}, [itemsFetched]);
-
 	return (
 		<List
 			subheader={<ListSubheader>Startup Items</ListSubheader>}
@@ -119,12 +75,14 @@ const Sidebar: React.FC = () => {
 					<DesktopWindowsIcon />
 				</ListItemIcon>
 				<ListItemText>
-					All Users ({startupMachineEntries.length})
+					All Users ({allEntries.filter((startupEntry) => {return startupEntry.Type === 'HKEY_LOCAL_MACHINE'}).length})
 				</ListItemText>
 			</ListItemButton>
 			<Collapse in={isOpenMachine}>
 				<List>
-					{startupMachineEntries.map((startupEntry) => {
+					{allEntries
+						.filter((startupEntry) => {return startupEntry.Type === 'HKEY_LOCAL_MACHINE'})
+						.map((startupEntry) => {
 						return (
 							<ListItemButton
 								key={startupEntry.Id}
@@ -154,12 +112,14 @@ const Sidebar: React.FC = () => {
 					<PersonIcon />
 				</ListItemIcon>
 				<ListItemText>
-					Current User ({startupUserEntries.length})
+					Current User ({allEntries.filter((startupEntry) => {return startupEntry.Type === 'HKEY_CURRENT_USER'}).length})
 				</ListItemText>
 			</ListItemButton>
 			<Collapse in={isOpenUser}>
 				<List>
-					{startupUserEntries.map((startupEntry) => {
+					{allEntries
+						.filter((startupEntry) => {return startupEntry.Type === 'HKEY_CURRENT_USER'})
+						.map((startupEntry) => {
 						return (
 							<ListItemButton
 								key={startupEntry.Id}
@@ -201,62 +161,3 @@ const Sidebar: React.FC = () => {
 };
 
 export default Sidebar;
-
-/*
-
-	// const [startupUserItems, setStartupUserItems] = useState<IStartupEntry[]>(
-	// 	[]
-	// );
-	// const [startupMachineItems, setStartupMachineItems] = useState<
-	// 	IStartupEntry[]
-	// >([]);
-
-	// const [customItems, setCustomItems] = useState([{ Name: "-" }]);
-	// const { entries, setEntries } = useEntries();
-
-	// const [startupEntries, setStartupEntries] = useRecoilState<IStartupEntry[]>(StartupEntries(0));
-	// const [startupEntries, setStartupEntries] = useRecoilState(StartupEntries(1)); 
-
-			// Promise.all(startupPromises).then(async () => {
-			// 	const allEntries = await readEntries();
-
-			// 	console.log("all entries???");
-			// 	// console.log(allEntries);
-			// 	Promise.all(allEntries).then(() => {
-			// 		console.log(allEntries);
-			// 		console.log("were u at");
-			// 	})
-			// });
-
-			// let userItems: IStartupEntry[] = [];
-			// let machineItems: IStartupEntry[] = [];
-
-
-			// let startupEntries: IStartupEntry[] = [];
-			// startupData.map((startupItem) => startupEntries.push(startupItem));
-
-			// console.log(startupEntries);
-
-			// setEntries(startupData);
-
-			// startupData.map((startupItem) => {
-			// 	if (startupItem.Type == "HKEY_CURRENT_USER")
-			// 		userItems.push(startupItem);
-			// 	else if (startupItem.Type == "HKEY_LOCAL_MACHINE")
-			// 		machineItems.push(startupItem);
-			// });
-
-			// setStartupUserItems(userItems);
-			// setStartupMachineItems(machineItems);
-
-			// console.log(userItems);
-			// console.log(machineItems);
-
-	const [fetchedStartupItems, setFetchedStartupItems] = useState(false);
-	useEffect(() => {
-		if (fetchedStartupItems) return;
-
-		fetchStartupItems();
-		setFetchedStartupItems(true);
-	});
-*/

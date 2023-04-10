@@ -6,11 +6,14 @@ import ConfirmationDialog from "app/components/ConfirmationDialog";
 import StartupOptions from "app/atoms/StartupOptions";
 import IStartupOptions from "app/atoms/StartupOptions/interface";
 import useStartupEntries, { ActiveStartupEntry } from "app/atoms/StartupEntry";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { useLoading } from "../LoadingProvider";
 
 const MainActions: React.FC = () => {
+	const { showLoading, hideLoading } = useLoading();
 	const [options] = useRecoilState<IStartupOptions>(StartupOptions);
 	const [activeStartupEntry] = useRecoilState(ActiveStartupEntry);
+	const resetActiveStartupEntry = useResetRecoilState(ActiveStartupEntry);
 	const [removeDialogOpen, setRemoveDialogOpen] = useState<boolean>(false);
 	const {
 		allEntries,
@@ -27,13 +30,37 @@ const MainActions: React.FC = () => {
 		}
 	`);
 
-	const removeRegistry = () => {
-		if(options.backupRegistry)BackupStartupItem(activeStartupEntry.Id);
-		// console.log("Backup registry is:", options.backupRegistry);
-		RemoveRegistryEntry(activeStartupEntry.Id);
-		// removeEntry(activeStartupEntry.Id);
-		setRemoveDialogOpen(false);
+	function backupStartupItem(id:number) {
+		return new Promise((resolve, reject) => {
+			BackupStartupItem(id)
+				.then((result) => {resolve(result);})
+				.catch((error) => {reject(error);})
+		});
+	}
 
+	function removeRegistryEntry(id:number) {
+		return new Promise((resolve, reject) => {
+			RemoveRegistryEntry(id)
+				.then((result) => {resolve(result);})
+				.catch((error) => {reject(error);})
+		});
+	}
+
+	const removeRegistry = async () => {
+		showLoading();
+		try {
+			if(options.backupRegistry)await backupStartupItem(activeStartupEntry.Id);
+
+			await removeRegistryEntry(activeStartupEntry.Id);
+
+			removeEntry(activeStartupEntry.Id);
+			resetActiveStartupEntry();
+			setRemoveDialogOpen(false);
+		} catch (error) {
+			console.error("An error ocurred:", error);
+		} finally {
+			hideLoading();
+		}
 	};
 
 	const scheduleRegistry = () => {
