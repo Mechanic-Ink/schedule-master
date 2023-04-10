@@ -91,10 +91,3 @@ const StartupSettings: React.FC = () => {
 }
 
 export default StartupSettings;
-
-/*
-	<FormControlLabel
-		control={<Checkbox onChange={(e) => setOption('timedClose', e.target.checked)}/>}
-		label="Always close the app after close time"
-	/>
-*/

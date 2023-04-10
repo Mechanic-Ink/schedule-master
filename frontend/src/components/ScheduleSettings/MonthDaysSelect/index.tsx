@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useRecoilState } from "recoil";
 import IStartupOptions from "app/atoms/StartupOptions/interface";
 import { Checkbox, Divider, FormControlLabel, FormGroup } from "@mui/material";
-// 
+
 const MonthDaysSelect: React.FC = () => {
 	const [options, _] = useRecoilState<IStartupOptions>(StartupOptions);
 	const { setOption } = useStartupOptions();
@@ -37,7 +37,6 @@ const MonthDaysSelect: React.FC = () => {
 		<>
 			<TextField select
 				label="Select days"
-				// helperText="Select the required days"
 				value={Object.keys(monthDaysMap)
 					.map((key) => parseInt(key))
 					.filter(isSelected)}

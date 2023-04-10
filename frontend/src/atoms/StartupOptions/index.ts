@@ -6,6 +6,7 @@ import IStartupOptions from "./interface";
 const StartupOptions = atom<IStartupOptions>({
 	key: 'ActiveStartupEntryOptions',
 	default: {
+		backupRegistry: false,
 		calendarShutdown: false,
 		calendarStartup: false,
 		calendarStartupDates: [],

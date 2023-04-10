@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"encoding/json"
 	"golang.org/x/sys/windows/registry"
 	"os/exec"
 	"context"
@@ -49,14 +51,18 @@ func (a *App) PrepareCacheDirectory() {
 		log.Println("Failed to get user cache directory")
 		return
 	}
-	a.cacheFolder = appData + "\\ScheduleMaster"
+	a.cacheFolder = appData + string(os.PathSeparator) + "ScheduleMaster"
 
 	os.Mkdir(a.cacheFolder, 0755)
+	os.Mkdir(a.cacheFolder + string(os.PathSeparator) + "backups", 0755)
 }
 
-
-func (a *App) FetchStartupItems() []StartupEntry {
-	StartupItems = make([]StartupEntry, 0)
+func (a *App) FetchStartupItems(reset bool) []StartupEntry {
+	if reset || len(StartupItems) == 0 {
+		StartupItems = make([]StartupEntry, 0)
+	} else {
+		return StartupItems
+	}
 	itemIndex = 1;
 
 	//Create Icon folder if it doesn't exist already
@@ -103,10 +109,60 @@ func (a *App) ShowExecutableLocation(file string) {
 	}
 }
 
-func (a *App) BackupStartupItems() bool {
-	items := a.FetchStartupItems()
+func (a *App) BackupStartupItem(id int) {
+	if id == 0 {
+		return
+	}
 
-	backupFile, error := os.Create("registryBackup.reg")
+	item := a.FetchStartupItems(false)[id - 1]
+
+	name := getStartupEntryHash(item)
+
+	path := a.cacheFolder + string(os.PathSeparator) + "backups" + string(os.PathSeparator) + name +".reg"
+
+	backupFile, error := os.Create(path)
+	if error != nil {
+		log.Println("Failed to create backup file")
+		log.Println(error)
+		return
+	}
+	defer backupFile.Close()
+
+	text := "Windows Registry Editor Version 5.00\n\n"
+	_, error = backupFile.WriteString(text)
+	if error != nil {
+		log.Println("failed to write initial text")
+		log.Println(error)
+		return
+	}
+
+	// var registryData = make(map[string]StartupEntry)
+	registryPath := item.Type + "\\" + item.Registry
+
+	text = "[" + registryPath + "]\n"
+
+	_, error = backupFile.WriteString(text)
+	if error != nil {
+		log.Println("Failed to write path")
+		log.Println(error)
+		return
+	}
+
+	text = `"` + item.Name + `"=` + strconv.QuoteToASCII(item.Command) + "\n"
+	_, error = backupFile.WriteString(text)
+	if error != nil {
+		log.Println("Failed to write entry")
+		log.Println(error)
+		return
+	}
+}
+
+func (a *App) BackupStartupItems() bool {
+	items := a.FetchStartupItems(false)
+
+	path := a.cacheFolder + string(os.PathSeparator) + "backups" + string(os.PathSeparator) + "AllItems.reg"
+
+	backupFile, error := os.Create(path)
 	if error != nil {
 		log.Println("Failed to create backup file")
 		log.Println(error)
@@ -156,30 +212,38 @@ func (a *App) BackupStartupItems() bool {
 		}
 	}
 
-	// for _, item := range items {
-	// 	baseKeyLocation := getKeyLocation(item.Type)
+	return true
+}
 
-	// 	key, error := registry.OpenKey(baseKeyLocation, item.Registry, registry.QUERY_VALUE)
-	// 	if error != nil {
-	// 		log.Println("Failed to open registry key")
-	// 		log.Println(error)
-	// 		return false
-	// 	}
-	// 	defer key.Close()
+func (a *App) RemoveRegistryEntry(id int) bool {
+	if id == 0 {
+		return false
+	}
 
-	// 	// error = key.SaveKey(backupFile)
-	// 	// if error != nil {
-	// 	// 	log.Fatal(error)
-	// 	// }
-	// 	command := exec.Command("reg", "export", item.Type + "\\" + item.Registry + "\\" + item.Name)
-	// 	log.Println(item.Type + "\\" + item.Registry + "\\" + item.Name)
-	// 	error = command.Run()
-	// 	if error != nil {
-	// 		log.Println("Failed to export key")
-	// 		log.Println(error)
-	// 		return false
-	// 	}
-	// }
+	item := a.FetchStartupItems(false)[id - 1]
+
+	registryType, error := getRegistryType(item.Type)
+	if error != nil {
+		panic(error)
+		return false
+	}
+
+	key, error := registry.OpenKey(registryType, item.Registry, registry.WRITE)
+	if error != nil {
+		panic(error)
+		return false
+	}
+	defer key.Close()
+	// log.Println(key)
+	// return true
+
+	error = key.DeleteValue(item.Name)
+	if error != nil {
+		panic(error)
+		return false
+	}
+
+	StartupItems = append(StartupItems[:id - 1], StartupItems[id + 1:]...)
 
 	return true
 }
@@ -280,4 +344,25 @@ func getKeyLocation(baseLocation string) registry.Key {
 	}
 
 	return registryKey
+}
+
+func getStartupEntryHash(entry StartupEntry) string {
+	data, error := json.Marshal(entry)
+	if error != nil {
+		panic(error)
+	}
+
+	hash := sha256.Sum256(data)
+	return fmt.Sprintf("%x", hash)
+}
+
+func getRegistryType(registryType string) (registry.Key, error) {
+	switch registryType {
+		case "HKEY_CURRENT_USER":
+			return registry.CURRENT_USER, nil
+		case "HKEY_LOCAL_MACHINE":
+			return registry.LOCAL_MACHINE, nil
+		default:
+			return 0, fmt.Errorf("registry type not found: %s", registryType)
+	}
 }

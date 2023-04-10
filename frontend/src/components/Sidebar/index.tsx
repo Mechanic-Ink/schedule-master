@@ -48,7 +48,8 @@ const Sidebar: React.FC = () => {
 	function fetchStartupItems() {
 		if(fetchCalled.current)return;
 		fetchCalled.current = true;
-		FetchStartupItems().then((startupEntries: IStartupEntry[]) => {
+
+		FetchStartupItems(true).then((startupEntries: IStartupEntry[]) => {
 			console.log("Called Fetch Startup Items");
 			setStartupMachineEntries([]);
 			setStartupUserEntries([]);

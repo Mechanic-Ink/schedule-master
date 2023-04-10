@@ -3,6 +3,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { BackupStartupItems } from "../../../wailsjs/go/main/App";
+// import { FetchStartupItems } from "../../../wailsjs/go/main/App";
 
 export default function MenuBar() {
 	const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(
@@ -23,6 +24,10 @@ export default function MenuBar() {
 		}
 	}
 
+	function reloadStartupItems() {
+
+	}
+
 	return (
 		<>
 			<Button onClick={(event) => toggleOpen("file", event)}>File</Button>
@@ -31,8 +36,10 @@ export default function MenuBar() {
 				anchorEl={anchorElement}
 				onClose={() => toggleOpen("file", null)}
 			>
-				<MenuItem>Reload Startup Items</MenuItem>
-				<MenuItem onClick={BackupStartupItems}>
+				<MenuItem onClick={() => reloadStartupItems()}>
+					Reload Startup Items
+				</MenuItem>
+				<MenuItem onClick={() => BackupStartupItems()}>
 					Backup Startup Items
 				</MenuItem>
 				<MenuItem>Exit</MenuItem>

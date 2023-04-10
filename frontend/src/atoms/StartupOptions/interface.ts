@@ -1,6 +1,7 @@
 import dayjs from 'app/util/dayjs.config';
 
 interface IStartupOptions {
+	backupRegistry:					boolean;
 	calendarShutdown:				boolean;
 	calendarStartup:				boolean;
 	calendarStartupDates:			dayjs.Dayjs[];

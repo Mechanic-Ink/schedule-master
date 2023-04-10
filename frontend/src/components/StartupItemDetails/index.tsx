@@ -4,16 +4,16 @@ import { useState } from "react";
 
 import { ShowExecutableLocation } from "../../../wailsjs/go/main/App";
 
-import IStartupItem from "./interface";
 import { useRecoilState } from "recoil";
 import IStartupOptions from "app/atoms/StartupOptions/interface";
 import StartupOptions, { useStartupOptions } from "app/atoms/StartupOptions";
+import { ActiveStartupEntry } from "app/atoms/StartupEntry";
 
-const StartupItemDetails: React.FC<IStartupItem> = ({item, backupRegistry, setBackupRegistry}) => {
-	const [options, _] = useRecoilState<IStartupOptions>(StartupOptions);
+const StartupItemDetails: React.FC = () => {
+	const [options] = useRecoilState<IStartupOptions>(StartupOptions);
 	const { setOption } = useStartupOptions();
 	const [editCommandOpen, setEditCommandOpen] = useState(false);
-
+	const [activeStartupEntry] = useRecoilState(ActiveStartupEntry);
 
 	const editItemCommand = () => {
 		const newCommand = (document.getElementById('editCommandField') as HTMLInputElement).value;
@@ -38,7 +38,7 @@ const StartupItemDetails: React.FC<IStartupItem> = ({item, backupRegistry, setBa
 			<Card sx={{ overflowWrap: "break-word", m:0.5}}>
 				<CardContent>
 					<Typography>
-						<strong>Name</strong>:&nbsp;{item.Name}
+						<strong>Name</strong>:&nbsp;{activeStartupEntry.Name}
 						<br />
 						<strong>Command</strong>:&nbsp;
 						{options.command}&nbsp;
@@ -53,27 +53,27 @@ const StartupItemDetails: React.FC<IStartupItem> = ({item, backupRegistry, setBa
 						</span>
 						<br />
 						<strong>Registry</strong>:&nbsp;
-						{item.Type}\
-						{item.Registry}
+						{activeStartupEntry.Type}\
+						{activeStartupEntry.Registry}
 						<br />
 						<strong>File</strong>:&nbsp;
 						<Link
 							href="#"
 							onClick={() =>
 								ShowExecutableLocation(
-									item.File
+									activeStartupEntry.File
 								)
 							}
 							color="inherit"
 							title="Open File Location"
 						>
-							{item.File}
+							{activeStartupEntry.File}
 						</Link>
 					</Typography>
 					<FormControl>
 						<FormControlLabel
 							control={
-								<Checkbox checked={backupRegistry} onChange={(e) => setBackupRegistry(!backupRegistry)}/>
+								<Checkbox checked={options.backupRegistry} onChange={(e) => setOption('backupRegistry', !options.backupRegistry)}/>
 							}
 							label="Backup Registry"
 						/>
