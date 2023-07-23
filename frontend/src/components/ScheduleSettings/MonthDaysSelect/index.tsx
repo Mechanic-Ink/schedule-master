@@ -20,17 +20,17 @@ const MonthDaysSelect: React.FC = () => {
 			days |= day;
 		});
 
-		const toggleDay = days ^ options.monthDayStartupDays;
+		const toggleDay = days ^ options.MonthDayStartupDays;
 
 		toggleMonthDay(toggleDay);
 	};
 
 	const toggleMonthDay = (monthDay: MonthDays) => {
-		setOption('monthDayStartupDays', (options.monthDayStartupDays ^ monthDay))
+		setOption('MonthDayStartupDays', (options.MonthDayStartupDays ^ monthDay))
 	};
 
 	const isSelected = (day: MonthDays): boolean => {
-		return (options.monthDayStartupDays & day) === day;
+		return (options.MonthDayStartupDays & day) === day;
 	}
 
 	return (
@@ -58,12 +58,12 @@ const MonthDaysSelect: React.FC = () => {
 			</TextField>
 			<FormGroup row>
 				<FormControlLabel 
-					control={<Checkbox onChange={(e) => setOption('monthDayStartupDaysLast', !options.monthDayStartupDaysLast)}/>}
+					control={<Checkbox onChange={(e) => setOption('MonthDayStartupDaysLast', !options.MonthDayStartupDaysLast)}/>}
 					label="Last"
 					labelPlacement="end"
 				/>
 				<FormControlLabel 
-					control={<Checkbox onChange={(e) => setOption('monthDayStartupDaysSecondLast', !options.monthDayStartupDaysSecondLast)}/>}
+					control={<Checkbox onChange={(e) => setOption('MonthDayStartupDaysSecondLast', !options.MonthDayStartupDaysSecondLast)}/>}
 					label="Second last"
 					labelPlacement="end"
 				/>

@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Link, TextField, Typography } from "@mui/material";
+import { Button, Card, CardContent, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, Link, TextField, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 
@@ -18,7 +18,7 @@ const StartupItemDetails: React.FC = () => {
 	const editItemCommand = () => {
 		const newCommand = (document.getElementById('editCommandField') as HTMLInputElement).value;
 
-		setOption('command', newCommand);
+		setOption('Command', newCommand);
 
 		setEditCommandOpen(false);
 	}
@@ -28,7 +28,7 @@ const StartupItemDetails: React.FC = () => {
 			<Dialog open={editCommandOpen} onClose={() => setEditCommandOpen(false)} fullWidth maxWidth="sm" >
 				<DialogTitle>Edit Command</DialogTitle>
 				<DialogContent>
-					<TextField id="editCommandField" label="Command to execute" variant="standard" defaultValue={options.command || ''} fullWidth/>
+					<TextField id="editCommandField" label="Command to execute" variant="standard" defaultValue={options.Command || ''} fullWidth/>
 				</DialogContent>
 				<DialogActions>
 					<Button color="error" onClick={() => setEditCommandOpen(false)}>Cancel</Button>
@@ -41,7 +41,7 @@ const StartupItemDetails: React.FC = () => {
 						<strong>Name</strong>:&nbsp;{activeStartupEntry.Name}
 						<br />
 						<strong>Command</strong>:&nbsp;
-						{options.command}&nbsp;
+						{options.Command}&nbsp;
 						<span title="Edit Command" onClick={() => setEditCommandOpen(true)}>
 							<EditIcon
 								sx={{
@@ -70,14 +70,24 @@ const StartupItemDetails: React.FC = () => {
 							{activeStartupEntry.File}
 						</Link>
 					</Typography>
-					<FormControl>
-						<FormControlLabel
-							control={
-								<Checkbox checked={options.backupRegistry} onChange={(e) => setOption('backupRegistry', !options.backupRegistry)}/>
-							}
-							label="Backup Registry"
-						/>
-					</FormControl>
+					<Grid container>
+						<Grid item xs={6} sm={6} lg={6} xl={6}>
+							<FormControlLabel
+								control={
+									<Checkbox checked={options.BackupRegistry} onChange={(e) => setOption('BackupRegistry', !options.BackupRegistry)}/>
+								}
+								label="Backup Registry"
+							/>
+						</Grid>
+						<Grid item xs={6} sm={6} lg={6} xl={6}>
+							<FormControlLabel
+								control={
+									<Checkbox checked={options.KeepRegistry} onChange={(e) => setOption('KeepRegistry', !options.KeepRegistry)}/>
+								}
+								label="Keep Registry"
+							/>
+						</Grid>
+					</Grid>
 				</CardContent>
 			</Card>
 		</>

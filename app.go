@@ -11,11 +11,15 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"path/filepath"
+	"schedule-master/structs"
 )
 
 type App struct {
-	ctx context.Context
-	cacheFolder string
+	ctx					context.Context
+	cacheFolder			string
+	backupFolder		string
+	scheduledFolder		string
 }
 
 func NewApp() *App {
@@ -26,25 +30,17 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	a.PrepareCacheDirectory()
+	a.PrepareDataDirectory()
 }
 
-type StartupEntry struct {
-	Id int16
-	Name string
-	Command string
-	Type string
-	Registry string
-	File string
-	Icon string
-}
+var StartupItems []structs.StartupEntry
+var ScheduledStartupItems []structs.ScheduledStartupEntry
 
-var StartupItems []StartupEntry
-
-var itemIndex int16 = 1;
+var itemIndex int16 = 1
+var scheduledItemIndex int16 = 1
 var iconPath string = "./frontend/src/assets/images/icons/"
 
-func (a *App) PrepareCacheDirectory() {
+func (a *App) PrepareDataDirectory() {
 	appData, error := os.UserCacheDir()
 
 	if error != nil {
@@ -54,12 +50,17 @@ func (a *App) PrepareCacheDirectory() {
 	a.cacheFolder = appData + string(os.PathSeparator) + "ScheduleMaster"
 
 	os.Mkdir(a.cacheFolder, 0755)
-	os.Mkdir(a.cacheFolder + string(os.PathSeparator) + "backups", 0755)
+
+	a.backupFolder = a.cacheFolder + string(os.PathSeparator) + "backups" + string(os.PathSeparator)
+	os.Mkdir(a.backupFolder, 0755)
+
+	a.scheduledFolder = a.cacheFolder + string(os.PathSeparator) + "scheduled" + string(os.PathSeparator)
+	os.Mkdir(a.scheduledFolder, 0755)
 }
 
-func (a *App) FetchStartupItems(reset bool) []StartupEntry {
+func (a *App) FetchStartupItems(reset bool) []structs.StartupEntry {
 	if reset || len(StartupItems) == 0 {
-		StartupItems = make([]StartupEntry, 0)
+		StartupItems = make([]structs.StartupEntry, 0)
 	} else {
 		return StartupItems
 	}
@@ -98,6 +99,58 @@ func (a *App) FetchStartupItems(reset bool) []StartupEntry {
 	return StartupItems
 }
 
+func (a *App) FetchScheduledItems(reset bool) []structs.ScheduledStartupEntry {
+	if reset || len(ScheduledStartupItems) == 0 {
+		ScheduledStartupItems = make([]structs.ScheduledStartupEntry, 0)
+	} else {
+		return ScheduledStartupItems
+	}
+	itemIndex = 1;
+
+	walkError := filepath.Walk(a.scheduledFolder, func(path string, fileInformation os.FileInfo, walkError error) error {
+		if walkError != nil {
+			return walkError
+		}
+
+		if fileInformation.IsDir() {
+			return nil
+		}
+
+		if filepath.Ext(path) == ".json" {
+			file, walkError := os.Open(path)
+			if walkError != nil {
+				return walkError
+			}
+			defer file.Close()
+
+			var fileEntries structs.ScheduledStartupEntry
+			decoder := json.NewDecoder(file)
+
+			walkError = decoder.Decode(&fileEntries)
+			if walkError != nil {
+				return walkError
+			}
+
+			log.Println(fileEntries)
+
+			ScheduledStartupItems = append(ScheduledStartupItems, fileEntries)
+		}
+
+		return nil
+	})
+
+	if walkError != nil {
+		log.Println("Failed to fetch scheduled entries")
+		log.Println(walkError)
+	}
+
+
+	log.Println("Startup Items results")
+	log.Println(ScheduledStartupItems)
+
+	return ScheduledStartupItems
+}
+
 func (a *App) ShowExecutableLocation(file string) {
 	command := exec.Command(`explorer.exe`, "/select,", file)
 	log.Println(command.String())
@@ -118,7 +171,7 @@ func (a *App) BackupStartupItem(id int) {
 
 	name := getStartupEntryHash(item)
 
-	path := a.cacheFolder + string(os.PathSeparator) + "backups" + string(os.PathSeparator) + name +".reg"
+	path := a.backupFolder + name +".reg"
 
 	backupFile, error := os.Create(path)
 	if error != nil {
@@ -160,7 +213,7 @@ func (a *App) BackupStartupItem(id int) {
 func (a *App) BackupStartupItems() bool {
 	items := a.FetchStartupItems(false)
 
-	path := a.cacheFolder + string(os.PathSeparator) + "backups" + string(os.PathSeparator) + "AllItems.reg"
+	path := a.backupFolder + "AllItems.reg"
 
 	backupFile, error := os.Create(path)
 	if error != nil {
@@ -179,12 +232,12 @@ func (a *App) BackupStartupItems() bool {
 		return false
 	}
 
-	var registryData = make(map[string][]StartupEntry)
+	var registryData = make(map[string][]structs.StartupEntry)
 	for _, item := range items {
 		registryPath :=  item.Type + "\\" + item.Registry
 
 		if _, ok := registryData[registryPath]; !ok {
-			registryData[registryPath] = []StartupEntry{}
+			registryData[registryPath] = []structs.StartupEntry{}
 		}
 
 		registryData[registryPath] = append(registryData[registryPath], item)
@@ -248,8 +301,49 @@ func (a *App) RemoveRegistryEntry(id int) bool {
 	return true
 }
 
-func fetchRegistryStartupItems(location string, path string) []StartupEntry {
-	var outcome []StartupEntry
+func (a *App) ScheduleRegistryEntry(entry structs.StartupEntry, options structs.StartupOptions) bool {
+
+	// log.Println("In Schedule Registry Entry\n")
+	// log.Println(entry)
+	// log.Println("\n\n\n\n")
+	// log.Println(options)
+
+	fileName := a.scheduledFolder + getStartupEntryHash(entry) + ".json"
+
+	data := structs.ScheduledStartupEntry{Entry: entry, Options: options}
+
+	log.Println("data")
+	log.Println(data)
+
+	file, error := os.Create(fileName)
+	if error != nil {
+		log.Println("Failed to create json file")
+		log.Println(fileName)
+		log.Println(error)
+		return false
+	}
+	defer file.Close()
+
+	jsonData, error := json.MarshalIndent(data, "", "	")
+	if error != nil {
+		log.Println("Failed to convert data to json")
+		return false
+	}
+
+	log.Println("jsonData")
+	log.Println(jsonData)
+
+	_, error = file.Write(jsonData)
+	if error != nil {
+		log.Println("Failed to write data to file")
+		return false
+	}
+
+	return true
+}
+
+func fetchRegistryStartupItems(location string, path string) []structs.StartupEntry {
+	var outcome []structs.StartupEntry
 
 	baseKeyLocation := getKeyLocation(location)
 
@@ -273,9 +367,6 @@ func fetchRegistryStartupItems(location string, path string) []StartupEntry {
 			log.Fatal(error)
 		}
 
-		// log.Printf("%s: %s\n", name, command)
-		// log.Println("CURRENT: ", name)
-
 		var duplicate bool = false
 
 		for _, item := range outcome {
@@ -291,7 +382,7 @@ func fetchRegistryStartupItems(location string, path string) []StartupEntry {
 
 			_ = extractExecutableIcon(fileName, iconPath + iconName)
 
-			outcome = append(outcome, StartupEntry {
+			outcome = append(outcome, structs.StartupEntry {
 				Id: itemIndex,
 				Name: name,
 				Command: command,
@@ -306,9 +397,7 @@ func fetchRegistryStartupItems(location string, path string) []StartupEntry {
 	return outcome
 }
 
-//Move these functions to a separate file, import as package
-//Loop through the startup records found and remove duplicates
-//As well as find the application icon from the executable, and
+//Move these functions to a separate file
 func extractExecutablePath(command string) string {
 	if len(command) > 0 && command[0] == '\\' {
 		command = command[1:]
@@ -346,7 +435,7 @@ func getKeyLocation(baseLocation string) registry.Key {
 	return registryKey
 }
 
-func getStartupEntryHash(entry StartupEntry) string {
+func getStartupEntryHash(entry structs.StartupEntry) string {
 	data, error := json.Marshal(entry)
 	if error != nil {
 		panic(error)

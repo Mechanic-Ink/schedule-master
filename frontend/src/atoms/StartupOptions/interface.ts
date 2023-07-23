@@ -1,24 +1,25 @@
 import dayjs from 'app/util/dayjs.config';
 
 interface IStartupOptions {
-	backupRegistry:					boolean;
-	calendarShutdown:				boolean;
-	calendarStartup:				boolean;
-	calendarStartupDates:			dayjs.Dayjs[];
-	command:						string;
-	lateStartup:					boolean;
-	monthDayStartup:				boolean;
-	monthDayStartupDays:			number;
-	monthDayStartupDaysLast:		boolean;
-	monthDayStartupDaysSecondLast:	boolean;
-	startupTime:					dayjs.Dayjs;
-	startupType:					number;
-	timedClose:						boolean;
-	timedReopen:					boolean;
-	timedShutdown:					boolean;
-	timedShutdownTime:				dayjs.Dayjs;
-	weekDayStartup:					boolean;
-	weekDayStartupDays:				number;
+	BackupRegistry:					boolean;
+	CalendarShutdown:				boolean;
+	CalendarStartup:				boolean;
+	CalendarStartupDates:			dayjs.Dayjs[];
+	Command:						string;
+	KeepRegistry:					boolean;
+	LateStartup:					boolean;
+	MonthDayStartup:				boolean;
+	MonthDayStartupDays:			number;
+	MonthDayStartupDaysLast:		boolean;
+	MonthDayStartupDaysSecondLast:	boolean;
+	StartupTime:					dayjs.Dayjs;
+	StartupType:					number;
+	TimedClose:						boolean;
+	TimedReopen:					boolean;
+	TimedShutdown:					boolean;
+	TimedShutdownTime:				dayjs.Dayjs;
+	WeekDayStartup:					boolean;
+	WeekDayStartupDays:				number;
 }
 
 export default IStartupOptions;

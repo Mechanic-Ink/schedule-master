@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Grid, styled } from "@mui/material";
 import { useState } from "react";
 
-import { BackupStartupItem, RemoveRegistryEntry } from "../../../wailsjs/go/main/App";
+import { BackupStartupItem, FetchScheduledItems, RemoveRegistryEntry, ScheduleRegistryEntry } from "../../../wailsjs/go/main/App";
 import ConfirmationDialog from "app/components/ConfirmationDialog";
 import StartupOptions from "app/atoms/StartupOptions";
 import IStartupOptions from "app/atoms/StartupOptions/interface";
@@ -49,7 +49,7 @@ const MainActions: React.FC = () => {
 	const removeRegistry = async () => {
 		showLoading();
 		try {
-			if(options.backupRegistry)await backupStartupItem(activeStartupEntry.Id);
+			if(options.BackupRegistry)await backupStartupItem(activeStartupEntry.Id);
 
 			await removeRegistryEntry(activeStartupEntry.Id);
 
@@ -63,9 +63,16 @@ const MainActions: React.FC = () => {
 		}
 	};
 
-	const scheduleRegistry = () => {
-		// console.log("Options", options);
-		console.log(allEntries);
+	const scheduleRegistry = async () => {
+		FetchScheduledItems(false);
+		return;
+		// // console.log("Options", options);
+		// console.log(allEntries);
+		// showLoading();
+
+		// ScheduleRegistryEntry(activeStartupEntry, options);
+		// if(!options.KeepRegistry)await removeRegistryEntry(activeStartupEntry.Id);
+		// hideLoading();
 	};
 
 	return (
@@ -77,7 +84,7 @@ const MainActions: React.FC = () => {
 							<Button sx={{width: '100%'}} onClick={() => scheduleRegistry()} variant="contained">Schedule</Button>&nbsp;
 						</Grid>
 						<Grid item xs={4} sx={{px:0.5}}>
-							<Button color="error" sx={{width: '100%'}} onClick={() => setRemoveDialogOpen(true)} variant="contained">Remove Registry</Button>
+							<Button color="error" sx={{width: '100%'}} onClick={() => setRemoveDialogOpen(true)} variant="contained">Delete</Button>
 						</Grid>
 					</Grid>
 				</CustomCardContent>

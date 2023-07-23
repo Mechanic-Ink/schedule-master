@@ -18,10 +18,10 @@ const MultiDateSelect: React.FC = () => {
 			<Button sx={{marginBottom: 2}}variant="contained" onClick={() => setOpen(true)}>Select Dates</Button>
 			<MultipleDatesPicker
 				open={open}
-				selectedDates={options.calendarStartupDates.map((day) => day.toDate())}
-				onCancel={() => {setOption('calendarStartupDates', [])}}
+				selectedDates={options.CalendarStartupDates.map((day) => day.toDate())}
+				onCancel={() => {setOption('CalendarStartupDates', [])}}
 				onSubmit={(dates:Date[]) => {
-					setOption('calendarStartupDates', dates.map((date) => dayjs(date)))
+					setOption('CalendarStartupDates', dates.map((date) => dayjs(date)))
 					setOpen(false);
 				}}
 				cancelButtonText="Clear"

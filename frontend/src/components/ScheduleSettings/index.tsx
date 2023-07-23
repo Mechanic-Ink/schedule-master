@@ -12,7 +12,7 @@ const ScheduleSettings: React.FC = () => {
 	const { setOption } = useStartupOptions();
 
 	const toggleStartupDay = (weekDay: WeekDays) => {
-		setOption('weekDayStartupDays', (options.weekDayStartupDays ^ weekDay));
+		setOption('WeekDayStartupDays', (options.WeekDayStartupDays ^ weekDay));
 	};
 
 	return (
@@ -22,10 +22,10 @@ const ScheduleSettings: React.FC = () => {
 					<Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
 						<FormLabel>Scheduling Settings:</FormLabel>
 						<FormControlLabel
-							control={<Checkbox onChange={(e) => setOption('weekDayStartup', e.target.checked)}/>}
+							control={<Checkbox onChange={(e) => setOption('WeekDayStartup', e.target.checked)}/>}
 							label="Run on specific week days"
 						/>
-						{options.weekDayStartup &&
+						{options.WeekDayStartup &&
 							<>
 								<FormGroup row>
 									<FormControlLabel
@@ -83,28 +83,28 @@ const ScheduleSettings: React.FC = () => {
 						}
 
 						<FormControlLabel
-							control={<Checkbox onChange={(e) => setOption('monthDayStartup', e.target.checked)}/>}
+							control={<Checkbox onChange={(e) => setOption('MonthDayStartup', e.target.checked)}/>}
 							label="Run on specific days of the month"
 						/>
-						{options.monthDayStartup && <MonthDaysSelect /> }
+						{options.MonthDayStartup && <MonthDaysSelect /> }
 
 						<FormControlLabel
-							control={<Checkbox onChange={(e) => setOption('calendarStartup', e.target.checked)}/>}
+							control={<Checkbox onChange={(e) => setOption('CalendarStartup', e.target.checked)}/>}
 							label="Run on specified dates"
 						/>
-						{options.calendarStartup && <MultiDateSelect/>}
+						{options.CalendarStartup && <MultiDateSelect/>}
 
-						{(options.weekDayStartup || options.monthDayStartup || options.calendarStartup) &&
+						{(options.WeekDayStartup || options.MonthDayStartup || options.CalendarStartup) &&
 							<>
 								<br/>
 								<FormLabel>Automatically close the app if:</FormLabel>
 								<FormControlLabel
-									control={<Checkbox onChange={(e) => setOption('calendarShutdown', e.target.checked)}/>}
+									control={<Checkbox onChange={(e) => setOption('CalendarShutdown', e.target.checked)}/>}
 									label="It runs during days/dates that it is not scheduled"
 								/>
-								{options.timedShutdown &&
+								{options.TimedShutdown &&
 									<FormControlLabel
-										control={<Checkbox onChange={(e) => setOption('timedShutdown', e.target.checked)}/>}
+										control={<Checkbox onChange={(e) => setOption('TimedShutdown', e.target.checked)}/>}
 										label="It runs outside of the time range specified"
 									/>
 								}

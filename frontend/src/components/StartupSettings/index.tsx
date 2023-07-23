@@ -25,9 +25,9 @@ const StartupSettings: React.FC = () => {
 							<InputLabel id="startup-type-label">When to run</InputLabel>
 							<Select
 								labelId="startup-type-label"
-								value={options.startupType}
+								value={options.StartupType}
 								label="When to run"
-								onChange={(e) => setOption('startupType', Number(e.target.value))}
+								onChange={(e) => setOption('StartupType', Number(e.target.value))}
 							>
 								<MenuItem value={0}>Startup</MenuItem>
 								<MenuItem value={1}>Log on</MenuItem>
@@ -36,15 +36,15 @@ const StartupSettings: React.FC = () => {
 						</FormControl>
 					</Grid>
 
-					{(options.startupType == 2) && (
+					{(options.StartupType == 2) && (
 						<>
 							<Grid item xs={6} sx={{px: 1}}>
 								<FormControl fullWidth>
 									<LocalizationProvider dateAdapter={AdapterDayjs}>
 										<TimePicker
-											value={options.startupTime}
+											value={options.StartupTime}
 											renderInput={(params) => <TextField sx={{maxWidth: '12rem'}} {...params} />}
-											onChange={(e) => setOption('startupTime', e ?? dayjs("2023-01-01T12:00"))}/>
+											onChange={(e) => setOption('StartupTime', e ?? dayjs("2023-01-01T12:00"))}/>
 									</LocalizationProvider>
 								</FormControl>
 							</Grid>
@@ -52,7 +52,7 @@ const StartupSettings: React.FC = () => {
 								<FormControl fullWidth>
 									<FormControlLabel
 										control={
-											<Checkbox checked={options.lateStartup} onChange={(e) => setOption('lateStartup', e.target.checked)}/>
+											<Checkbox checked={options.LateStartup} onChange={(e) => setOption('LateStartup', e.target.checked)}/>
 										}
 										label="Enable late startup"
 									/>
@@ -63,21 +63,21 @@ const StartupSettings: React.FC = () => {
 					<Grid item xs={12}>
 						<FormControlLabel
 							control={
-								<Checkbox checked={options.timedShutdown} onChange={(e) => setOption('timedShutdown', e.target.checked)}/>
+								<Checkbox checked={options.TimedShutdown} onChange={(e) => setOption('TimedShutdown', e.target.checked)}/>
 							}
 							label="Close at a specified time"
 						/>
 
-						{(options.timedShutdown)?
+						{(options.TimedShutdown)?
 							<>
 								<LocalizationProvider dateAdapter={AdapterDayjs}>
 									<TimePicker
-										value={options.timedShutdownTime}
+										value={options.TimedShutdownTime}
 										renderInput={(params) => <TextField sx={{maxWidth: '12rem'}} {...params} />}
-										onChange={(e) => setOption('timedShutdownTime', e ?? dayjs("2023-01-01T12:00"))}/>
+										onChange={(e) => setOption('TimedShutdownTime', e ?? dayjs("2023-01-01T12:00"))}/>
 								</LocalizationProvider>
 								<FormControlLabel
-									control={<Checkbox onChange={(e) => setOption('timedReopen', e.target.checked)}/>}
+									control={<Checkbox onChange={(e) => setOption('TimedReopen', e.target.checked)}/>}
 									label="Always reopen the app before this time"
 								/>
 							</>

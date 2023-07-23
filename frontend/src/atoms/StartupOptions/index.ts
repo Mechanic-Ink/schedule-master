@@ -6,24 +6,25 @@ import IStartupOptions from "./interface";
 const StartupOptions = atom<IStartupOptions>({
 	key: 'ActiveStartupEntryOptions',
 	default: {
-		backupRegistry: false,
-		calendarShutdown: false,
-		calendarStartup: false,
-		calendarStartupDates: [],
-		command: '',
-		lateStartup: false,
-		monthDayStartup: false,
-		monthDayStartupDays: 0,
-		monthDayStartupDaysLast: false,
-		monthDayStartupDaysSecondLast: false,
-		startupTime: dayjs("2023-01-01T12:00"),
-		startupType: 0,
-		timedClose: false,
-		timedReopen: false,
-		timedShutdown: false,
-		timedShutdownTime: dayjs("2023-01-01T12:00"),
-		weekDayStartup: false,
-		weekDayStartupDays: 0,
+		BackupRegistry: true,
+		CalendarShutdown: false,
+		CalendarStartup: false,
+		CalendarStartupDates: [],
+		Command: '',
+		KeepRegistry: false,
+		LateStartup: false,
+		MonthDayStartup: false,
+		MonthDayStartupDays: 0,
+		MonthDayStartupDaysLast: false,
+		MonthDayStartupDaysSecondLast: false,
+		StartupTime: dayjs("2023-01-01T12:00"),
+		StartupType: 0,
+		TimedClose: false,
+		TimedReopen: false,
+		TimedShutdown: false,
+		TimedShutdownTime: dayjs("2023-01-01T12:00"),
+		WeekDayStartup: false,
+		WeekDayStartupDays: 0,
 	}
 });
 
@@ -39,7 +40,7 @@ export function useStartupOptions() {
 		}));
 	};
 
-	return { setOption };
+	return { setOption, setOptions };
 }
 
 

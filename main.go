@@ -2,7 +2,7 @@ package main
 
 import (
 	"embed"
-
+	"schedule-master/scheduler"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -12,6 +12,8 @@ import (
 var assets embed.FS
 
 func main() {
+	scheduler := scheduler.GetInstance()
+	scheduler.FetchEntries()
 	// Create an instance of the app structure
 	app := NewApp()
 

@@ -10,16 +10,24 @@ export function BackupStartupItems() {
   return window['go']['main']['App']['BackupStartupItems']();
 }
 
+export function FetchScheduledItems(arg1) {
+  return window['go']['main']['App']['FetchScheduledItems'](arg1);
+}
+
 export function FetchStartupItems(arg1) {
   return window['go']['main']['App']['FetchStartupItems'](arg1);
 }
 
-export function PrepareCacheDirectory() {
-  return window['go']['main']['App']['PrepareCacheDirectory']();
+export function PrepareDataDirectory() {
+  return window['go']['main']['App']['PrepareDataDirectory']();
 }
 
 export function RemoveRegistryEntry(arg1) {
   return window['go']['main']['App']['RemoveRegistryEntry'](arg1);
+}
+
+export function ScheduleRegistryEntry(arg1, arg2) {
+  return window['go']['main']['App']['ScheduleRegistryEntry'](arg1, arg2);
 }
 
 export function ShowExecutableLocation(arg1) {
