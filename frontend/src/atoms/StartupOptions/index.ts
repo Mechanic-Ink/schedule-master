@@ -19,7 +19,7 @@ const StartupOptions = atom<IStartupOptions>({
 		MonthDayStartupDaysSecondLast: false,
 		StartupTime: dayjs("2023-01-01T12:00"),
 		StartupType: 0,
-		TimedClose: false,
+		// TimedClose: false,
 		TimedReopen: false,
 		TimedShutdown: false,
 		TimedShutdownTime: dayjs("2023-01-01T12:00"),

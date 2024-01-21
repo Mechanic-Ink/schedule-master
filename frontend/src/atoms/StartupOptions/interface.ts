@@ -14,7 +14,7 @@ interface IStartupOptions {
 	MonthDayStartupDaysSecondLast:	boolean;
 	StartupTime:					dayjs.Dayjs;
 	StartupType:					number;
-	TimedClose:						boolean;
+	// TimedClose:						boolean;
 	TimedReopen:					boolean;
 	TimedShutdown:					boolean;
 	TimedShutdownTime:				dayjs.Dayjs;

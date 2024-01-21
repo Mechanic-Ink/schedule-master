@@ -64,15 +64,16 @@ const MainActions: React.FC = () => {
 	};
 
 	const scheduleRegistry = async () => {
-		FetchScheduledItems(false);
-		return;
+		// FetchScheduledItems(false);
+		// return;
 		// // console.log("Options", options);
 		// console.log(allEntries);
-		// showLoading();
+		showLoading();
 
-		// ScheduleRegistryEntry(activeStartupEntry, options);
-		// if(!options.KeepRegistry)await removeRegistryEntry(activeStartupEntry.Id);
-		// hideLoading();
+		ScheduleRegistryEntry(activeStartupEntry, options);
+		if(options.BackupRegistry)await backupStartupItem(activeStartupEntry.Id);
+		if(!options.KeepRegistry)await removeRegistryEntry(activeStartupEntry.Id);
+		hideLoading();
 	};
 
 	return (

@@ -131,7 +131,7 @@ func (a *App) FetchScheduledItems(reset bool) []structs.ScheduledStartupEntry {
 				return walkError
 			}
 
-			log.Println(fileEntries)
+			// log.Println(fileEntries)
 
 			ScheduledStartupItems = append(ScheduledStartupItems, fileEntries)
 		}
@@ -145,15 +145,15 @@ func (a *App) FetchScheduledItems(reset bool) []structs.ScheduledStartupEntry {
 	}
 
 
-	log.Println("Startup Items results")
-	log.Println(ScheduledStartupItems)
+	// log.Println("Startup Items results")
+	// log.Println(ScheduledStartupItems)
 
 	return ScheduledStartupItems
 }
 
 func (a *App) ShowExecutableLocation(file string) {
 	command := exec.Command(`explorer.exe`, "/select,", file)
-	log.Println(command.String())
+	// log.Println(command.String())
 
 	error := command.Start()
 	if error != nil {
@@ -312,8 +312,8 @@ func (a *App) ScheduleRegistryEntry(entry structs.StartupEntry, options structs.
 
 	data := structs.ScheduledStartupEntry{Entry: entry, Options: options}
 
-	log.Println("data")
-	log.Println(data)
+	// log.Println("data")
+	// log.Println(data)
 
 	file, error := os.Create(fileName)
 	if error != nil {
@@ -330,8 +330,8 @@ func (a *App) ScheduleRegistryEntry(entry structs.StartupEntry, options structs.
 		return false
 	}
 
-	log.Println("jsonData")
-	log.Println(jsonData)
+	// log.Println("jsonData")
+	// log.Println(jsonData)
 
 	_, error = file.Write(jsonData)
 	if error != nil {

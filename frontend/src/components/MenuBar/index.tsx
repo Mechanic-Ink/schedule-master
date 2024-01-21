@@ -31,7 +31,7 @@ export default function MenuBar() {
 		toggleOpen("file", null);
 	}
 
-	function testMethod() {
+	function openBackupFolder() {
 		console.log(allScheduledEntries);
 	}
 
@@ -49,8 +49,8 @@ export default function MenuBar() {
 				<MenuItem onClick={() => BackupStartupItems()}>
 					Backup Startup Items
 				</MenuItem>
-				<MenuItem onClick={() => testMethod()}>
-					Test
+				<MenuItem onClick={() => openBackupFolder()}>
+					Open Backup Folder
 				</MenuItem>
 				<MenuItem>Exit</MenuItem>
 			</Menu>

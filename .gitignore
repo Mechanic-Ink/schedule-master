@@ -1,3 +1,7 @@
 build/bin
 node_modules
 frontend/dist
+.exe
+
+wails/*
+frontend/src/assets/images/icons/*

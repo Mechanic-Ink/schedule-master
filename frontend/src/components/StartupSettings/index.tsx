@@ -1,4 +1,4 @@
-import { Card, CardContent, Checkbox, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Card, CardContent, Checkbox, Divider, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -29,8 +29,8 @@ const StartupSettings: React.FC = () => {
 								label="When to run"
 								onChange={(e) => setOption('StartupType', Number(e.target.value))}
 							>
-								<MenuItem value={0}>Startup</MenuItem>
-								<MenuItem value={1}>Log on</MenuItem>
+								{/*<MenuItem value={0}>Startup</MenuItem>*/}
+								<MenuItem value={1}>On Start</MenuItem>
 								<MenuItem value={2}>Scheduled</MenuItem>
 							</Select>
 						</FormControl>
@@ -60,7 +60,8 @@ const StartupSettings: React.FC = () => {
 							</Grid>
 						</>
 					)}
-					<Grid item xs={12}>
+					
+{/*					<Grid item xs={12}>
 						<FormControlLabel
 							control={
 								<Checkbox checked={options.TimedShutdown} onChange={(e) => setOption('TimedShutdown', e.target.checked)}/>
@@ -78,12 +79,12 @@ const StartupSettings: React.FC = () => {
 								</LocalizationProvider>
 								<FormControlLabel
 									control={<Checkbox onChange={(e) => setOption('TimedReopen', e.target.checked)}/>}
-									label="Always reopen the app before this time"
+									label="Always reopen the app before close time"
 								/>
 							</>
 							: ''
 						}
-					</Grid>
+					</Grid>*/}
 				</Grid>
 			</CardContent>
 		</Card>
