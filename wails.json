@@ -9,5 +9,8 @@
   "author": {
     "name": "Mechanic Ink",
     "email": "contact@mechanic.ink"
+  },
+  "build": {
+    "sourceDir": "go"
   }
 }

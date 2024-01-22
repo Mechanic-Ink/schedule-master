@@ -2,9 +2,10 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-import { BackupStartupItems } from "../../../wailsjs/go/main/App";
+import { BackupStartupItems, OpenBackupFolder, Exit, Hide } from "../../../wailsjs/go/main/App";
 import useFetchStartupItems from "app/util/actions/useFetchStartupItems";
 import useScheduledStartupEntries from "app/atoms/ScheduledStartupEntry";
+import useFetchScheduledStartupItems from "app/util/actions/useFetchScheduledStartupItems";
 
 export default function MenuBar() {
 	const [anchorElement, setAnchorElement] = useState<null | HTMLElement>(
@@ -12,6 +13,7 @@ export default function MenuBar() {
 	);
 	const [openFile, setOpenFile] = useState<boolean>(false);
 	const { fetchStartupItems } = useFetchStartupItems(true);
+	const { fetchScheduledStartupItems } = useFetchScheduledStartupItems();
 	const { allScheduledEntries } = useScheduledStartupEntries();
 
 	function toggleOpen(
@@ -28,11 +30,8 @@ export default function MenuBar() {
 
 	function reloadStartupItems() {
 		fetchStartupItems();
+		fetchScheduledStartupItems();
 		toggleOpen("file", null);
-	}
-
-	function openBackupFolder() {
-		console.log(allScheduledEntries);
 	}
 
 	return (
@@ -49,10 +48,16 @@ export default function MenuBar() {
 				<MenuItem onClick={() => BackupStartupItems()}>
 					Backup Startup Items
 				</MenuItem>
-				<MenuItem onClick={() => openBackupFolder()}>
+				<MenuItem onClick={() => OpenBackupFolder()}>
 					Open Backup Folder
 				</MenuItem>
-				<MenuItem>Exit</MenuItem>
+				<MenuItem>New Scheduled Entry</MenuItem>
+				<MenuItem onClick={() => Hide()}>
+					Close To Tray
+				</MenuItem>
+				<MenuItem onClick={() => Exit()}>
+					Exit
+				</MenuItem>
 			</Menu>
 		</>
 	);

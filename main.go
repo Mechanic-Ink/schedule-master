@@ -3,12 +3,13 @@ package main
 import (
 	"embed"
 	"log"
-	"io/ioutil"
-	"schedule-master/scheduler"
+	"schedule-master/go/scheduler"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/getlantern/systray"
+	"context"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 //go:embed all:frontend/dist
@@ -17,19 +18,23 @@ var assets embed.FS
 //go:embed assets/logo.png
 var logo embed.FS
 
+var app *App
+
 func main() {
 	scheduler := scheduler.GetInstance()
-	// scheduler.FetchEntries()
 	go scheduler.Start()
-	// Create an instance of the app structure
+
+	app = NewApp()
 
 	go func() {
 		systray.Run(onSystrayReady, onSystrayExit)
 	}()
 
-	app := NewApp()
+	onBeforeClose := func(ctx context.Context) bool {
+		runtime.WindowHide(ctx)
+		return true
+	}
 
-	// Create application with options
 	error := wails.Run(&options.App{
 		Title: "Schedule Master",
 		Width: 1024,
@@ -38,23 +43,16 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup: app.startup,
+		OnStartup: app.Startup,
 		Bind: []interface{}{
 			app,
 		},
+		OnBeforeClose: onBeforeClose,
 	})
 
 	if error != nil {
 		println("Error:", error.Error())
 	}
-}
-
-func loadImage(path string) []byte {
-    image, err := ioutil.ReadFile(path)
-    if err != nil {
-        log.Fatalf("Failed to load image: %v", err)
-    }
-    return image
 }
 
 func onSystrayReady() {
@@ -72,11 +70,15 @@ func onSystrayReady() {
 
 	for {
 		select {
-		case <-mShow.ClickedCh:
-			// TODO: Implement showing the app window
-		case <-mQuit.ClickedCh:
-			// TODO: Implement quit logic
-			systray.Quit()
+			case <-mShow.ClickedCh:
+				// TODO: Implement showing the app window
+				app.Show()
+				break;
+			case <-mQuit.ClickedCh:
+				// TODO: Implement quit logic
+				app.Exit()
+				systray.Quit()
+				break;
 		}
 	}
 }

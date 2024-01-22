@@ -10,12 +10,24 @@ export function BackupStartupItems() {
   return window['go']['main']['App']['BackupStartupItems']();
 }
 
+export function Exit() {
+  return window['go']['main']['App']['Exit']();
+}
+
 export function FetchScheduledItems(arg1) {
   return window['go']['main']['App']['FetchScheduledItems'](arg1);
 }
 
 export function FetchStartupItems(arg1) {
   return window['go']['main']['App']['FetchStartupItems'](arg1);
+}
+
+export function Hide() {
+  return window['go']['main']['App']['Hide']();
+}
+
+export function OpenBackupFolder() {
+  return window['go']['main']['App']['OpenBackupFolder']();
 }
 
 export function PrepareDataDirectory() {
@@ -28,6 +40,10 @@ export function RemoveRegistryEntry(arg1) {
 
 export function ScheduleRegistryEntry(arg1, arg2) {
   return window['go']['main']['App']['ScheduleRegistryEntry'](arg1, arg2);
+}
+
+export function Show() {
+  return window['go']['main']['App']['Show']();
 }
 
 export function ShowExecutableLocation(arg1) {
