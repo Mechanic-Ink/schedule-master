@@ -1,19 +1,17 @@
 # README
 
+![Schedule Master](cover.png)
+
 ## About
 
-This is the official Wails React-TS template.
+Schedule Master aims to be the to-go tool for scheduling software execution on windows. 
+Why? While Windows task scheduler is a good tool, there are several instances where it falls short.
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+**Upcoming features**:<br/>
+&#9744; Installer<br/>
+&#9744; Run on startup<br/>
+&#9744; Fine-grained complex scheduling<br/>
+&#9744; Ensuring a process stays running (& restart it)<br/>
+&#9744; Timed shutdown & preventing software from running out of schedule<br/>
 
-## Live Development
-
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build`.
+If you have any suggestions or have found any bugs, please add a new <a href="https://github.com/Mechanic-Ink/schedule-master/issues">issue</a>.
